@@ -3,6 +3,10 @@ package br.com.techsync.models;
 import br.com.techsync.models.cliente.Cliente;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -23,6 +27,10 @@ public class Orcamento {
 
     @Column
     private double valor;
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
 
     // Construtores
     public Orcamento() {}
@@ -62,5 +70,13 @@ public class Orcamento {
         this.valor = servicos.stream()
                 .mapToDouble(s -> s.getValor() * s.getQuantidade())
                 .sum();
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

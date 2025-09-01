@@ -6,6 +6,7 @@ import br.com.techsync.service.OrcamentoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -22,6 +23,18 @@ public class OrcamentoController {
     public ResponseEntity<Orcamento> criar(@RequestBody Orcamento orcamento) {
         Orcamento novoOrcamento = service.criarOrcamento(orcamento);
         return ResponseEntity.ok(novoOrcamento);
+    }
+
+    @PostMapping("/lote")
+    public ResponseEntity<List<Orcamento>> criarEmLote(@RequestBody List<Orcamento> orcamentos) {
+        List<Orcamento> novosOrcamentos = new ArrayList<>();
+
+        for (Orcamento orc : orcamentos) {
+            Orcamento novo = service.criarOrcamento(orc);
+            novosOrcamentos.add(novo);
+        }
+
+        return ResponseEntity.ok(novosOrcamentos);
     }
 
     @GetMapping

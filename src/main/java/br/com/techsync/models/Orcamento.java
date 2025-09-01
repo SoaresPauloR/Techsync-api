@@ -28,6 +28,9 @@ public class Orcamento {
     @Column
     private double valor;
 
+    @Column
+    private String status;
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -78,5 +81,13 @@ public class Orcamento {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

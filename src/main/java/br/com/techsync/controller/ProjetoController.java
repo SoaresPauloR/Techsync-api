@@ -31,24 +31,27 @@ public class ProjetoController {
     }
 
     @PostMapping
-    public ResponseEntity<Projeto> salvar(
+    public ResponseEntity<String> salvar(
             @RequestBody Projeto projeto,
             @RequestParam Integer clienteId) {
-        return ResponseEntity.ok(projetoService.salvar(projeto, clienteId));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Optional<Projeto>> deletar(@PathVariable Integer id) {
-        return ResponseEntity.ok(projetoService.deletar(id));
+        projetoService.salvar(projeto, clienteId);
+        return ResponseEntity.ok("Projeto criado com sucesso!");
     }
 
     @PutMapping("/{id}/status")
-    public ResponseEntity<String> mudarStatus(@PathVariable Integer id, @RequestParam String status) {
+    public ResponseEntity<String> mudarStatus(
+            @PathVariable Integer id,
+            @RequestParam String status) {
         boolean atualizado = projetoService.mudarStatus(id, status);
         if (atualizado) {
-            return ResponseEntity.ok("Status atualizado com sucesso!");
-        } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok("Status do projeto atualizado com sucesso!");
         }
+        return ResponseEntity.badRequest().body("Não foi possível atualizar o status do projeto.");
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletar(@PathVariable Integer id) {
+        projetoService.deletar(id);
+        return ResponseEntity.ok("Projeto deletado com sucesso!");
     }
 }

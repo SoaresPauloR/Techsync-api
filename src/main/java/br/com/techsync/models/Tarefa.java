@@ -15,6 +15,7 @@ public class Tarefa {
     private String nome;
     private String descricao;
     private String status;
+    private String prioridade;
 
     private LocalDate dataInicio;
     private LocalDate dataTermino;
@@ -90,5 +91,13 @@ public class Tarefa {
     public boolean mudarStatus(String novoStatus) {
         this.status = novoStatus;
         return true;
+    }
+
+    public String getPrioridade() {
+        return prioridade;
+    }
+
+    public void setPrioridade(String prioridade) {
+        this.prioridade = prioridade;
     }
 }

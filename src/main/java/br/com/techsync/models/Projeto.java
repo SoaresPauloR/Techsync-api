@@ -17,6 +17,7 @@ public class Projeto {
     private String nome;
     private String status;
     private String descricao;
+    private String observacoes;
 
     private LocalDate dataInicio;
     private LocalDate dataTermino;
@@ -88,5 +89,13 @@ public class Projeto {
     public boolean mudarStatus(String novoStatus) {
         this.status = novoStatus;
         return true;
+    }
+
+    public String getObservacoes() {
+        return observacoes;
+    }
+
+    public void setObservacoes(String observacoes) {
+        this.observacoes = observacoes;
     }
 }

@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/projetos")
@@ -18,11 +17,13 @@ public class ProjetoController {
         this.projetoService = projetoService;
     }
 
+    // Listar todos os projetos
     @GetMapping
     public ResponseEntity<List<Projeto>> listarTodos() {
         return ResponseEntity.ok(projetoService.listarTodos());
     }
 
+    // Buscar projeto por ID
     @GetMapping("/{id}")
     public ResponseEntity<Projeto> buscarPorId(@PathVariable Integer id) {
         return projetoService.buscarPorId(id)
@@ -30,6 +31,7 @@ public class ProjetoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // Criar projeto
     @PostMapping
     public ResponseEntity<String> salvar(
             @RequestBody Projeto projeto,
@@ -38,6 +40,7 @@ public class ProjetoController {
         return ResponseEntity.ok("Projeto criado com sucesso!");
     }
 
+    // Mudar status do projeto (EM_ANDAMENTO, CONCLUIDO, etc)
     @PutMapping("/{id}/status")
     public ResponseEntity<String> mudarStatus(
             @PathVariable Integer id,
@@ -49,9 +52,22 @@ public class ProjetoController {
         return ResponseEntity.badRequest().body("Não foi possível atualizar o status do projeto.");
     }
 
+    // Deletar projeto
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletar(@PathVariable Integer id) {
         projetoService.deletar(id);
         return ResponseEntity.ok("Projeto deletado com sucesso!");
     }
+
+    // Registrar pagamento do projeto (PENDENTE -> PAGO)
+    @PutMapping("/{id}/pagar")
+    public ResponseEntity<String> pagarProjeto(@PathVariable Integer id) {
+        boolean pago = projetoService.pagarProjeto(id);
+        if (pago) {
+            return ResponseEntity.ok("Projeto pago com sucesso!");
+        } else {
+            return ResponseEntity.badRequest().body("Projeto já está pago ou não existe.");
+        }
+    }
 }
+

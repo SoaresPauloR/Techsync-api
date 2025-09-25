@@ -52,7 +52,31 @@ public class ProjetoService {
         return projeto;
     }
 
-    // Mudar status do projeto (EM_ANDAMENTO, CONCLUIDO, etc)
+    public boolean atualizar(Integer id, Projeto projetoAtualizado, Integer clienteId) {
+        Optional<Projeto> projetoOpt = projetoRepository.findById(id);
+        if (projetoOpt.isPresent()) {
+            Projeto projeto = projetoOpt.get();
+
+            // Atualiza dados
+            projeto.setNome(projetoAtualizado.getNome());
+            projeto.setDescricao(projetoAtualizado.getDescricao());
+            projeto.setStatus(projetoAtualizado.getStatus());
+            projeto.setDataInicio(projetoAtualizado.getDataInicio());
+            projeto.setDataTermino(projetoAtualizado.getDataTermino());
+
+            // Atualiza cliente, se necessário
+            Cliente cliente = clienteRepository.findById(clienteId)
+                    .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+            projeto.setCliente(cliente);
+
+            projetoRepository.save(projeto);
+            return true;
+        }
+        return false;
+    }
+
+
+    // Mudar status do projeto (EM ANDAMENTO, CONCLUIDO, etc)
     public boolean mudarStatus(Integer id, String status) {
         Optional<Projeto> projeto = projetoRepository.findById(id);
         if (projeto.isPresent()) {

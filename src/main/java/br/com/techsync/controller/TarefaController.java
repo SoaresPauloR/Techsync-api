@@ -18,11 +18,13 @@ public class TarefaController {
         this.tarefaService = tarefaService;
     }
 
+    // Lista todas as tarefas
     @GetMapping
     public ResponseEntity<List<Tarefa>> listarTodas() {
         return ResponseEntity.ok(tarefaService.listarTodas());
     }
 
+    // Lista tarefa por ID
     @GetMapping("/{id}")
     public ResponseEntity<Tarefa> buscarPorId(@PathVariable Integer id) {
         return tarefaService.buscarPorId(id)
@@ -30,6 +32,7 @@ public class TarefaController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // Cria uma tarefa
     @PostMapping
     public ResponseEntity<String> salvar(
             @RequestBody Tarefa tarefa,
@@ -39,6 +42,22 @@ public class TarefaController {
         return ResponseEntity.ok("Tarefa criada com sucesso!");
     }
 
+    // Muda as informações referentes a tarefa
+    @PutMapping("/{id}")
+    public ResponseEntity<String> atualizarTarefa(
+            @PathVariable Integer id,
+            @RequestBody Tarefa tarefaAtualizada,
+            @RequestParam Integer responsavelId) {
+
+        boolean atualizado = tarefaService.atualizar(id, tarefaAtualizada, responsavelId);
+
+        if (atualizado) {
+            return ResponseEntity.ok("Tarefa atualizada com sucesso!");
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    // Muda o status da tarefa (EM ANDAMENTO, CONCLUIDA, etc)
     @PutMapping("/{id}/status")
     public ResponseEntity<String> mudarStatus(
             @PathVariable Integer id,
@@ -50,6 +69,7 @@ public class TarefaController {
         return ResponseEntity.badRequest().body("Não foi possível atualizar o status da tarefa.");
     }
 
+    // Deleta uma tarefa
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletar(@PathVariable Integer id) {
         tarefaService.deletar(id);

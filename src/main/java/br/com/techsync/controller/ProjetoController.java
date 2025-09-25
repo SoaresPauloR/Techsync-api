@@ -40,7 +40,23 @@ public class ProjetoController {
         return ResponseEntity.ok("Projeto criado com sucesso!");
     }
 
-    // Mudar status do projeto (EM_ANDAMENTO, CONCLUIDO, etc)
+    // Editar informações referentes ao projeto
+    @PutMapping("/{id}")
+    public ResponseEntity<String> atualizarProjeto(
+            @PathVariable Integer id,
+            @RequestBody Projeto projetoAtualizado,
+            @RequestParam Integer clienteId) {
+
+        boolean atualizado = projetoService.atualizar(id, projetoAtualizado, clienteId);
+
+        if (atualizado) {
+            return ResponseEntity.ok("Projeto atualizado com sucesso!");
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+
+    // Mudar status do projeto (EM ANDAMENTO, CONCLUIDO, etc)
     @PutMapping("/{id}/status")
     public ResponseEntity<String> mudarStatus(
             @PathVariable Integer id,

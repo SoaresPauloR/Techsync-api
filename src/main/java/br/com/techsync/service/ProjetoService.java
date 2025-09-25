@@ -21,33 +21,58 @@ public class ProjetoService {
         this.clienteRepository = clienteRepository;
     }
 
+    // Listar todos os projetos
     public List<Projeto> listarTodos() {
         return projetoRepository.findAll();
     }
 
+    // Buscar projeto por ID
     public Optional<Projeto> buscarPorId(Integer id) {
         return projetoRepository.findById(id);
     }
 
+    // Salvar projeto (inicializa statusPagamento como PENDENTE)
     public Projeto salvar(Projeto projeto, Integer clienteId) {
         Cliente cliente = clienteRepository.findById(clienteId)
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
         projeto.setCliente(cliente);
+
+        // Inicializa financeiro simplificado
+        if (projeto.getStatusPagamento() == null) {
+            projeto.setStatusPagamento("PENDENTE");
+        }
+
         return projetoRepository.save(projeto);
     }
 
+    // Deletar projeto
     public Optional<Projeto> deletar(Integer id) {
         Optional<Projeto> projeto = projetoRepository.findById(id);
         projeto.ifPresent(p -> projetoRepository.delete(p));
         return projeto;
     }
 
+    // Mudar status do projeto (EM_ANDAMENTO, CONCLUIDO, etc)
     public boolean mudarStatus(Integer id, String status) {
         Optional<Projeto> projeto = projetoRepository.findById(id);
         if (projeto.isPresent()) {
             projeto.get().mudarStatus(status);
             projetoRepository.save(projeto.get());
             return true;
+        }
+        return false;
+    }
+
+    // Registrar pagamento do projeto (PENDENTE -> PAGO)
+    public boolean pagarProjeto(Integer id) {
+        Optional<Projeto> projetoOpt = projetoRepository.findById(id);
+        if (projetoOpt.isPresent()) {
+            Projeto projeto = projetoOpt.get();
+            if (!"PAGO".equals(projeto.getStatusPagamento())) {
+                projeto.setStatusPagamento("PAGO");
+                projetoRepository.save(projeto);
+                return true;
+            }
         }
         return false;
     }

@@ -22,6 +22,10 @@ public class Projeto {
     private LocalDate dataInicio;
     private LocalDate dataTermino;
 
+    // ---- Controle Financeiro simplificado ----
+    private Double valor; // orçamento do projeto
+    private String statusPagamento; // PENDENTE ou PAGO
+
     @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
@@ -71,6 +75,13 @@ public class Projeto {
     public void setDataTermino(LocalDate dataTermino) {
         this.dataTermino = dataTermino;
     }
+
+    public Double getValor() { return valor;}
+    public void setValor(Double valor) {this.valor = valor;}
+
+    public String getStatusPagamento() {return statusPagamento;}
+
+    public void setStatusPagamento(String statusPagamento) {this.statusPagamento = statusPagamento;}
 
     public Cliente getCliente() {
         return cliente;

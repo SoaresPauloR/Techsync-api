@@ -25,31 +25,34 @@ public class TarefaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Tarefa> buscarPorId(@PathVariable Integer id) {
-        Optional<Tarefa> tarefa = tarefaService.buscarPorId(id);
-        return tarefa.map(ResponseEntity::ok)
+        return tarefaService.buscarPorId(id)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Tarefa> salvar(
+    public ResponseEntity<String> salvar(
             @RequestBody Tarefa tarefa,
-            @RequestParam(required = false) Integer projetoId,
-            @RequestParam(required = false) Integer usuarioId) {
-        return ResponseEntity.ok(tarefaService.salvar(tarefa, projetoId, usuarioId));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Optional<Tarefa>> deletar(@PathVariable Integer id) {
-        return ResponseEntity.ok(tarefaService.deletar(id));
+            @RequestParam Integer projetoId,
+            @RequestParam Integer usuarioId) {
+        tarefaService.salvar(tarefa, projetoId, usuarioId);
+        return ResponseEntity.ok("Tarefa criada com sucesso!");
     }
 
     @PutMapping("/{id}/status")
-    public ResponseEntity<String> mudarStatus(@PathVariable Integer id, @RequestParam String status) {
+    public ResponseEntity<String> mudarStatus(
+            @PathVariable Integer id,
+            @RequestParam String status) {
         boolean atualizado = tarefaService.mudarStatus(id, status);
         if (atualizado) {
-            return ResponseEntity.ok("Status atualizado com sucesso!");
-        } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok("Status da tarefa atualizado com sucesso!");
         }
+        return ResponseEntity.badRequest().body("Não foi possível atualizar o status da tarefa.");
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletar(@PathVariable Integer id) {
+        tarefaService.deletar(id);
+        return ResponseEntity.ok("Tarefa deletada com sucesso!");
     }
 }

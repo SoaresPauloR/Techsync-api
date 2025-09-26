@@ -46,10 +46,9 @@ public class TarefaController {
     @PutMapping("/{id}")
     public ResponseEntity<String> atualizarTarefa(
             @PathVariable Integer id,
-            @RequestBody Tarefa tarefaAtualizada,
-            @RequestParam Integer responsavelId) {
+            @RequestBody Tarefa tarefaAtualizada) {
 
-        boolean atualizado = tarefaService.atualizar(id, tarefaAtualizada, responsavelId);
+        boolean atualizado = tarefaService.atualizar(id, tarefaAtualizada);
 
         if (atualizado) {
             return ResponseEntity.ok("Tarefa atualizada com sucesso!");

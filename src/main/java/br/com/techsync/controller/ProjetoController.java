@@ -44,10 +44,9 @@ public class ProjetoController {
     @PutMapping("/{id}")
     public ResponseEntity<String> atualizarProjeto(
             @PathVariable Integer id,
-            @RequestBody Projeto projetoAtualizado,
-            @RequestParam Integer clienteId) {
+            @RequestBody Projeto projetoAtualizado) {
 
-        boolean atualizado = projetoService.atualizar(id, projetoAtualizado, clienteId);
+        boolean atualizado = projetoService.atualizar(id, projetoAtualizado);
 
         if (atualizado) {
             return ResponseEntity.ok("Projeto atualizado com sucesso!");

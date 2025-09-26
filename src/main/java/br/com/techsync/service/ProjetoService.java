@@ -52,7 +52,7 @@ public class ProjetoService {
         return projeto;
     }
 
-    public boolean atualizar(Integer id, Projeto projetoAtualizado, Integer clienteId) {
+    public boolean atualizar(Integer id, Projeto projetoAtualizado) {
         Optional<Projeto> projetoOpt = projetoRepository.findById(id);
         if (projetoOpt.isPresent()) {
             Projeto projeto = projetoOpt.get();
@@ -65,7 +65,7 @@ public class ProjetoService {
             projeto.setDataTermino(projetoAtualizado.getDataTermino());
 
             // Atualiza cliente, se necessário
-            Cliente cliente = clienteRepository.findById(clienteId)
+            Cliente cliente = clienteRepository.findById(projetoAtualizado.getCliente().getId())
                     .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
             projeto.setCliente(cliente);
 

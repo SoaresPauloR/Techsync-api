@@ -50,7 +50,7 @@ public class TarefaService {
         return tarefa;
     }
 
-    public boolean atualizar(Integer id, Tarefa tarefaAtualizada, Integer responsavelId) {
+    public boolean atualizar(Integer id, Tarefa tarefaAtualizada) {
         Optional<Tarefa> tarefaOpt = tarefaRepository.findById(id);
         if (tarefaOpt.isPresent()) {
             Tarefa tarefa = tarefaOpt.get();
@@ -61,11 +61,6 @@ public class TarefaService {
             tarefa.setStatus(tarefaAtualizada.getStatus());
             tarefa.setDataInicio(tarefaAtualizada.getDataInicio());
             tarefa.setDataTermino(tarefaAtualizada.getDataTermino());
-
-            // Atualiza responsável
-            Usuario responsavel = usuarioRepository.findById(responsavelId)
-                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-            tarefa.setResponsavel(responsavel);
 
             tarefaRepository.save(tarefa);
             return true;

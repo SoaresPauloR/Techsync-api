@@ -3,6 +3,7 @@ package br.com.techsync.service;
 import br.com.techsync.models.Orcamento;
 import br.com.techsync.models.Servicos;
 import br.com.techsync.repository.OrcamentoRepository;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -52,19 +53,26 @@ public class OrcamentoService {
     public Orcamento atualizarOrcamento(int id, Orcamento dadosAtualizados) {
         return orcamentoRepository.findById(id).map(orcamentoExistente -> {
 
+            // Copia os dados básicos
             orcamentoExistente.setCliente(dadosAtualizados.getCliente());
+            orcamentoExistente.setStatus(dadosAtualizados.getStatus());
 
-            double valorTotal = orcamentoExistente.getValor();
+            // Limpa os serviços antigos e adiciona os novos
+            orcamentoExistente.getServicos().clear();
+            double valorTotal = 0.0;
 
             for (Servicos s : dadosAtualizados.getServicos()) {
-                s.setOrcamento(orcamentoExistente);
+                s.setOrcamento(orcamentoExistente); // mantém o vínculo bidirecional
                 orcamentoExistente.getServicos().add(s);
                 valorTotal += s.getValor() * s.getQuantidade();
             }
 
+            // Atualiza o valor total
             orcamentoExistente.setValor(valorTotal);
 
+            // Agora salva tudo
             return orcamentoRepository.save(orcamentoExistente);
         }).orElse(null);
     }
+
 }

@@ -71,7 +71,7 @@ public class Orcamento {
 
     private void calcularValorTotal() {
         this.valor = servicos.stream()
-                .mapToDouble(s -> s.getValor() * s.getQuantidade())
+                .mapToDouble(s -> s.getValor() * 1)
                 .sum();
     }
 

@@ -3,7 +3,6 @@ package br.com.techsync.models;
 import br.com.techsync.models.cliente.Cliente;
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,96 +16,44 @@ public class Projeto {
     private String nome;
     private String status;
     private String descricao;
-    private String observacoes;
 
     private LocalDate dataInicio;
     private LocalDate dataTermino;
 
-    // ---- Controle Financeiro simplificado ----
-    private Double valor; // orçamento do projeto
-    private String statusPagamento; // PENDENTE ou PAGO
-
     @ManyToOne
-    @JoinColumn(name = "cliente_id", nullable = false)
+    @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
     @OneToMany(mappedBy = "projeto", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Tarefa> tarefas = new ArrayList<>();
+    private List<Tarefa> tarefas;
 
-    // Getters e Setters
-    public Integer getId() {
-        return id;
-    }
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
-    public LocalDate getDataInicio() {
-        return dataInicio;
-    }
-    public void setDataInicio(LocalDate dataInicio) {
-        this.dataInicio = dataInicio;
-    }
-
-    public LocalDate getDataTermino() {
-        return dataTermino;
-    }
-    public void setDataTermino(LocalDate dataTermino) {
-        this.dataTermino = dataTermino;
-    }
-
-    public Double getValor() { return valor;}
-    public void setValor(Double valor) {this.valor = valor;}
-
-    public String getStatusPagamento() {return statusPagamento;}
-
-    public void setStatusPagamento(String statusPagamento) {this.statusPagamento = statusPagamento;}
-
-    public Cliente getCliente() {
-        return cliente;
-    }
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
-    }
-
-    public List<Tarefa> getTarefas() {
-        return tarefas;
-    }
-    public void setTarefas(List<Tarefa> tarefas) {
-        this.tarefas = tarefas;
-    }
-
-    public boolean mudarStatus(String novoStatus) {
+    // ======== Métodos auxiliares ========
+    public void mudarStatus(String novoStatus) {
         this.status = novoStatus;
-        return true;
     }
 
-    public String getObservacoes() {
-        return observacoes;
-    }
+    // ======== Getters e Setters ========
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
 
-    public void setObservacoes(String observacoes) {
-        this.observacoes = observacoes;
-    }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public String getDescricao() { return descricao; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
+
+    public LocalDate getDataInicio() { return dataInicio; }
+    public void setDataInicio(LocalDate dataInicio) { this.dataInicio = dataInicio; }
+
+    public LocalDate getDataTermino() { return dataTermino; }
+    public void setDataTermino(LocalDate dataTermino) { this.dataTermino = dataTermino; }
+
+    public Cliente getCliente() { return cliente; }
+    public void setCliente(Cliente cliente) { this.cliente = cliente; }
+
+    public List<Tarefa> getTarefas() { return tarefas; }
+    public void setTarefas(List<Tarefa> tarefas) { this.tarefas = tarefas; }
 }

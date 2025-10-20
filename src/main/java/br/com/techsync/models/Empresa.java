@@ -3,7 +3,7 @@ package br.com.techsync.models;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "T_TS_COMPANY")
+@Table(name = "T_TS_EMPRESA")
 public class Empresa {
 
     @Id

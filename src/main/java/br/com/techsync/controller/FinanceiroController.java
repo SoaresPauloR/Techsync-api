@@ -30,9 +30,8 @@ public class FinanceiroController {
     }
 
     @PostMapping
-    public ResponseEntity<String> salvar(@RequestBody Financeiro financeiro,
-                                         @RequestParam Integer clienteId) {
-        financeiroService.salvar(financeiro, clienteId);
+    public ResponseEntity<String> salvar(@RequestBody Financeiro financeiro) {
+        financeiroService.salvar(financeiro);
         return ResponseEntity.ok("Transação registrada com sucesso e nota fiscal gerada!");
     }
 
@@ -40,6 +39,19 @@ public class FinanceiroController {
     public ResponseEntity<String> deletar(@PathVariable Integer id) {
         boolean deletado = financeiroService.deletar(id);
         if (deletado) {
+            return ResponseEntity.ok("Transação removida com sucesso!");
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> editar(@RequestBody Financeiro financeiro, @PathVariable int id) {
+
+        financeiro.setId(id);
+
+        Financeiro newFinanceiro = financeiroService.editar(financeiro);
+
+        if (newFinanceiro.getId() != null) {
             return ResponseEntity.ok("Transação removida com sucesso!");
         }
         return ResponseEntity.notFound().build();

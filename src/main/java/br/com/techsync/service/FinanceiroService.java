@@ -29,8 +29,8 @@ public class FinanceiroService {
         return financeiroRepository.findById(id);
     }
 
-    public Financeiro salvar(Financeiro financeiro, Integer clienteId) {
-        Cliente cliente = clienteRepository.findById(clienteId)
+    public Financeiro salvar(Financeiro financeiro) {
+        Cliente cliente = clienteRepository.findById(financeiro.getCliente().getId())
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
 
         financeiro.setCliente(cliente);
@@ -46,5 +46,15 @@ public class FinanceiroService {
             return true;
         }
         return false;
+    }
+
+    public Financeiro editar(Financeiro financeiro) {
+        Cliente cliente = clienteRepository.findById(financeiro.getCliente().getId())
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+
+        financeiro.setCliente(cliente);
+        financeiro.gerarNotaFiscal();
+
+        return financeiroRepository.save(financeiro);
     }
 }

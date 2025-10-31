@@ -34,12 +34,11 @@ public class TarefaController {
 
     // Cria uma tarefa
     @PostMapping
-    public ResponseEntity<String> salvar(
+    public Tarefa salvar(
             @RequestBody Tarefa tarefa,
             @RequestParam Integer projetoId,
             @RequestParam Integer usuarioId) {
-        tarefaService.salvar(tarefa, projetoId, usuarioId);
-        return ResponseEntity.ok("Tarefa criada com sucesso!");
+        return tarefaService.salvar(tarefa, projetoId, usuarioId);
     }
 
     // Muda as informações referentes a tarefa

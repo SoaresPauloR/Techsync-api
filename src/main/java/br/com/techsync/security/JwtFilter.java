@@ -14,26 +14,27 @@ import java.io.IOException;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
+    // Chave secreta usada para validar os tokens JWT
     private final String chaveSecreta = "MinhaChaveSuperSecreta1234567890123456";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        // --- ADIÇÃO AQUI: Permitir requisições OPTIONS ---
+        // Permite que requisições OPTIONS passem sem autenticação (necessário para CORS)
         if (request.getMethod().equalsIgnoreCase("OPTIONS")) {
-            response.setStatus(HttpServletResponse.SC_OK); // Retorna 200 OK para a requisição OPTIONS
-            filterChain.doFilter(request, response); // Permite que a requisição siga
-            return; // Encerra a execução do filtro para OPTIONS
+            response.setStatus(HttpServletResponse.SC_OK);
+            filterChain.doFilter(request, response);
+            return;
         }
-        // --- FIM DA ADIÇÃO ---
 
         String authorizationHeader = request.getHeader("Authorization");
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String token = authorizationHeader.substring(7); // Remove o "Bearer "
+            String token = authorizationHeader.substring(7); // Remove o prefixo "Bearer "
 
             try {
+                // Valida o token e extrai as informações (claims)
                 Claims claims = Jwts.parserBuilder()
                         .setSigningKey(chaveSecreta.getBytes())
                         .build()
@@ -41,15 +42,17 @@ public class JwtFilter extends OncePerRequestFilter {
                         .getBody();
 
                 String email = claims.getSubject();
-                request.setAttribute("email", email);
+                request.setAttribute("email", email); // Adiciona o email na requisição para uso posterior
 
             } catch (Exception e) {
+                // Token inválido ou expirado
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("Token JWT inválido ou expirado.");
                 return;
             }
 
         } else {
+            // Se o endpoint for protegido e não houver token, retorna 401
             if (isProtectedEndpoint(request)) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("Token JWT ausente.");
@@ -57,9 +60,11 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         }
 
+        // Continua a cadeia de filtros
         filterChain.doFilter(request, response);
     }
 
+    // Verifica se o endpoint requer autenticação
     private boolean isProtectedEndpoint(HttpServletRequest request) {
         String path = request.getRequestURI();
         String method = request.getMethod();

@@ -22,11 +22,15 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/usuarios")
 public class UsuarioController {
 
+    // Serviço de usuários que contém a lógica de negócio
     @Autowired
     private UsuarioService usuarioService;
 
+    // Serviço para registrar logs de login
     @Autowired
     private LogService logService;
+
+    // ================== Endpoints ==================
 
     // Criar um novo usuário
     @PostMapping
@@ -35,7 +39,7 @@ public class UsuarioController {
             Usuario novoUsuario = new Usuario();
             novoUsuario.setNome(usuarioRequest.getNome());
             novoUsuario.setEmail(usuarioRequest.getEmail());
-            novoUsuario.setSenha(usuarioRequest.getSenha()); // A senha será criptografada no serviço
+            novoUsuario.setSenha(usuarioRequest.getSenha());
             novoUsuario.setTelefone(usuarioRequest.getTelefone());
             novoUsuario.setCpf(usuarioRequest.getCpf());
 
@@ -44,24 +48,26 @@ public class UsuarioController {
 
             return ResponseEntity.status(HttpStatus.CREATED).body(usuarioResponse);
         } catch (IllegalArgumentException e) {
+            // Erro de validação, por exemplo email duplicado
             Map<String, String> errorResponse = Map.of("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         } catch (Exception e) {
+            // Erro interno do servidor
             Map<String, String> errorResponse = Map.of("error", "Ocorreu um erro interno ao criar o usuário.");
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 
-    // Editar um usuário
+    // Editar um usuário existente
     @PutMapping("/{id}")
     public ResponseEntity<?> editarUsuario(@PathVariable int id, @Valid @RequestBody UsuarioRequest usuarioRequest) {
         try {
             Usuario usuarioParaAtualizar = new Usuario();
             usuarioParaAtualizar.setNome(usuarioRequest.getNome());
             usuarioParaAtualizar.setEmail(usuarioRequest.getEmail());
-            // A senha é opcional na edição, então só a atualizamos se ela for enviada.
-            // Para maior segurança, um endpoint separado de "mudar senha" é uma boa prática.
+
+            // Senha é opcional na edição; atualiza apenas se fornecida
             if (usuarioRequest.getSenha() != null && !usuarioRequest.getSenha().isBlank()) {
                 usuarioParaAtualizar.setSenha(usuarioRequest.getSenha());
             }
@@ -96,8 +102,8 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioResponses);
     }
 
-    // Listar um único usuário por ID
-    @GetMapping ("/{id}")
+    // Buscar um usuário por ID
+    @GetMapping("/{id}")
     public ResponseEntity<UsuarioResponse> buscarUsuarioID(@PathVariable int id){
         Usuario usuario = usuarioService.buscarUsuarioId(id);
         if (usuario != null){
@@ -115,32 +121,27 @@ public class UsuarioController {
                 : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
     }
 
-    // Fazer login
+    // Login do usuário, retorna token JWT
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) { // <-- Tipo de retorno alterado para LoginResponse
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
         String token = usuarioService.loginComJwt(loginRequest.getEmail(), loginRequest.getSenha());
         String ip = request.getRemoteAddr();
 
         if (token != null) {
-            // Buscando o usuário para retornar o objeto completo, não apenas o token
+            // Usuário autenticado, registra log de sucesso
             Usuario usuarioAutenticado = usuarioService.buscarUsuarioPorEmail(loginRequest.getEmail());
             logService.registrarLogin(loginRequest.getEmail(), ip, true, null);
 
-            // Cria o objeto LoginResponse
             LoginResponse responseBody = new LoginResponse(token, usuarioAutenticado);
-            return ResponseEntity.ok().body(responseBody); // Spring serializará para JSON automaticamente
+            return ResponseEntity.ok().body(responseBody);
         } else {
+            // Login falhou, registra log de erro
             logService.registrarLogin(loginRequest.getEmail(), ip, false, "Email ou senha inválidos.");
-            // Para erros, você pode retornar um ResponseEntity<Map<String, String>> ou um DTO de erro,
-            // mas aqui manteremos a consistência com o que você já tinha para erros, retornando um JSON string
-            // Mas, para ser consistente com o ResponseEntity<LoginResponse>, o ideal seria ter um ResponseEntity<ErrorResponse>
-            // Por simplicidade, vamos retornar um erro HTTP BAD_REQUEST ou UNAUTHORIZED sem um corpo LoginResponse
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null); // Retorna null no corpo se o tipo for LoginResponse, ou mude para ResponseEntity<String>
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
     }
 
-
-    // Resetar Senha do usuário
+    // Resetar senha do usuário
     @PostMapping("/resetSenha")
     public ResponseEntity<String> resetSenha(@RequestParam String email, @RequestParam String novaSenha){
         boolean sucesso = usuarioService.resetSenha(email,novaSenha);
@@ -152,7 +153,7 @@ public class UsuarioController {
         }
     }
 
-    //Gerar codigo de autentificação de dois fatores (2FA)
+    // Gerar código de autenticação em dois fatores (2FA)
     @PostMapping("/gerar2fa")
     public ResponseEntity<String> gerarCodigo2FA(@RequestParam String email){
         boolean gerado = usuarioService.gerarCodigo2FA(email);
@@ -164,7 +165,7 @@ public class UsuarioController {
         }
     }
 
-    //Realizando a autenticação de dois fatores (2FA)
+    // Autenticação de dois fatores (2FA)
     @PostMapping("/autenticar2fa")
     public ResponseEntity<String> autenticar2FA(
             @RequestParam String email,

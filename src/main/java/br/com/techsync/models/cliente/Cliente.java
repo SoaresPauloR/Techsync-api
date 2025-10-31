@@ -8,261 +8,77 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Representa um cliente.
- */
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "T_TS_CLIENTE")
 public class Cliente {
 
-    /**
-     * Identificador único do cliente.
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Integer id;
+    private Integer id; // Identificador único do cliente
 
-    /**
-     * Nome do cliente.
-     */
-    @Column(name = "name", nullable = false)
-    private String nome;
+    @Column(nullable = false)
+    private String nome; // Nome do cliente
 
-    /**
-     * E-mail do cliente.
-     */
-    @Column(name = "email", nullable = false, unique = true)
-    private String email;
+    @Column(nullable = false, unique = true)
+    private String email; // Email do cliente
 
-    /**
-     * CNPJ/CPF do cliente.
-     */
-    @Column(name = "cnpj_cpf", unique = true)
-    private String cnpj_cpf;
+    @Column(unique = true)
+    private String cnpj_cpf; // CNPJ ou CPF do cliente
 
-    /**
-     * Número de telefone do cliente.
-     */
-    @Column(name = "phone_number", nullable = false)
-    private String telefone;
+    @Column(nullable = false)
+    private String telefone; // Número de telefone do cliente
 
-    /**
-     * Status do cliente.
-     */
-    @Column(name = "status", nullable = false)
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private Status status; // Status do cliente (ativo, inativo etc.)
 
-    /**
-     * Endereço do cliente.
-     */
-    @Column(name = "address", length = 1000)
-    private String endereco;
+    @Column(length = 1000)
+    private String endereco; // Endereço do cliente
 
-    /**
-     * Anexo (arquivo) associado ao cliente.
-     */
     @Lob
-    @Column(name = "anexo")
-    private byte[] anexo;
+    private byte[] anexo; // Anexo (arquivo) associado ao cliente
 
-    /**
-     * Observação sobre o cliente.
-     */
-    @Column(name = "obs", length = 1000)
-    private String observacao;
+    @Column(length = 1000)
+    private String observacao; // Observações adicionais sobre o cliente
 
-    /**
-     * Responsáveis do cliente.
-     */
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<Responsavel> responsaveis = new ArrayList<>();
+    private List<Responsavel> responsaveis = new ArrayList<>(); // Lista de responsáveis vinculados ao cliente
 
-    // Construtor
+    // Construtor padrão
     public Cliente() {}
 
-    // Getter e Setters
+    // ================== Getters e Setters ==================
+    // Métodos para acessar e modificar os atributos do cliente
 
-    /**
-     * Obtém o identificador do cliente.
-     *
-     * @return id do cliente
-     */
-    public Integer getId() {
-        return id;
-    }
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
 
-    /**
-     * Define o identificador do cliente.
-     *
-     * @param id novo identificador do cliente
-     */
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
 
-    /**
-     * Obtém o nome do cliente.
-     *
-     * @return nome do cliente
-     */
-    public String getNome() {
-        return nome;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    /**
-     * Define o nome do cliente.
-     *
-     * @param nome novo nome do cliente
-     */
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
+    public String getCnpj_cpf() { return cnpj_cpf; }
+    public void setCnpj_cpf(String cnpj_cpf) { this.cnpj_cpf = cnpj_cpf; }
 
-    /**
-     * Obtém o e-mail do cliente.
-     *
-     * @return e-mail do cliente
-     */
-    public String getEmail() {
-        return email;
-    }
+    public String getTelefone() { return telefone; }
+    public void setTelefone(String telefone) { this.telefone = telefone; }
 
-    /**
-     * Define o e-mail do cliente.
-     *
-     * @param email novo e-mail do cliente
-     */
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public Status getStatus() { return status; }
+    public void setStatus(Status status) { this.status = status; }
 
-    /**
-     * Obtém o CNPJ/CPF do cliente.
-     *
-     * @return CNPJ/CPF do cliente
-     */
-    public String getCnpj_cpf() {
-        return cnpj_cpf;
-    }
+    public String getEndereco() { return endereco; }
+    public void setEndereco(String endereco) { this.endereco = endereco; }
 
-    /**
-     * Define o CNPJ/CPF do cliente.
-     *
-     * @param cnpj_cpf novo CNPJ/CPF do cliente
-     */
-    public void setCnpj_cpf(String cnpj_cpf) {
-        this.cnpj_cpf = cnpj_cpf;
-    }
+    public byte[] getAnexo() { return anexo; }
+    public void setAnexo(byte[] anexo) { this.anexo = anexo; }
 
-    /**
-     * Obtém o número de telefone do cliente.
-     *
-     * @return número de telefone do cliente
-     */
-    public String getTelefone() {
-        return telefone;
-    }
+    public String getObservacao() { return observacao; }
+    public void setObservacao(String observacao) { this.observacao = observacao; }
 
-    /**
-     * Define o número de telefone do cliente.
-     *
-     * @param telefone novo número de telefone do cliente
-     */
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    /**
-     * Obtém o status do cliente.
-     *
-     * @return status do cliente
-     */
-    public Status getStatus() {
-        return status;
-    }
-
-    /**
-     * Define o status do cliente.
-     *
-     * @param status novo status do cliente
-     */
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    /**
-     * Obtém o endereço do cliente.
-     *
-     * @return endereço do cliente
-     */
-    public String getEndereco() {
-        return endereco;
-    }
-
-    /**
-     * Define o endereço do cliente.
-     *
-     * @param endereco novo endereço do cliente
-     */
-    public void setEndereco(String endereco) {
-        this.endereco = endereco;
-    }
-
-    /**
-     * Obtém o anexo (arquivo) associado ao cliente.
-     *
-     * @return anexo (arquivo) associado ao cliente
-     */
-    public byte[] getAnexo() {
-        return anexo;
-    }
-
-    /**
-     * Define o anexo (arquivo) associado ao cliente.
-     *
-     * @param anexo novo anexo (arquivo) associado ao cliente
-     */
-    public void setAnexo(byte[] anexo) {
-        this.anexo = anexo;
-    }
-
-    /**
-     * Obtém a observação sobre o cliente.
-     *
-     * @return observação sobre o cliente
-     */
-    public String getObservacao() {
-        return observacao;
-    }
-
-    /**
-     * Define a observação sobre o cliente.
-     *
-     * @param observacao nova observação sobre o cliente
-     */
-    public void setObservacao(String observacao) {
-        this.observacao = observacao;
-    }
-
-    /**
-     * Obtém os responsáveis do cliente.
-     *
-     * @return responsáveis do cliente
-     */
-    public List<Responsavel> getResponsaveis() {
-        return responsaveis;
-    }
-
-    /**
-     * Define os responsáveis do cliente.
-     *
-     * @param responsaveis novos responsáveis do cliente
-     */
-    public void setResponsaveis(List<Responsavel> responsaveis) {
-        this.responsaveis = responsaveis;
-    }
+    public List<Responsavel> getResponsaveis() { return responsaveis; }
+    public void setResponsaveis(List<Responsavel> responsaveis) { this.responsaveis = responsaveis; }
 }
